@@ -19,7 +19,7 @@ Container_Boundary(ledger, "Ledger") {
 
 Container(message_bus, "Message Bus", "Kafka", "Transport for account events")
 
-Rel_U(ledger_pub_service, message_bus, "Sends account update events to")
+Rel(ledger_pub_service, message_bus, "Sends account update events to")
 
 Rel(ledger_command_api, command_database, "Write operations about the accounts")
 Rel(ledger_query_api, query_database, "Read operations related to the accounts")
@@ -35,6 +35,6 @@ Rel(message_bus, external_systems, "Get events related to accounts", "RPC/HTTPS"
 
 Rel_Neighbor(ledger_command_api, ledger_query_api, "Sends events related to accounts")
 Rel_U(ledger_query_api, ledger_pub_service, "Sends events related to accounts")
-Rel_R(ledger_query_api, report_api, "Sends events related to accounts")
+Rel(report_api, ledger_query_api, "Get events related to accounts")
 
 @enduml

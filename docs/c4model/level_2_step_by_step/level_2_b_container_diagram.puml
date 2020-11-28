@@ -31,7 +31,4 @@ Rel_Neighbor(ledger_command_api, ledger_query_api, "Sends events related to acco
 
 Lay_R(ledger_command_api, ledger_query_api)
 
-
-' Rel_Neighbor(ledger_command_handler, ledger_query_handler, "Sends events related to accounts")
-' Rel_Neighbor(ledger_command_handler, ledger_pub_service, "Sends events related to accounts")
 @enduml

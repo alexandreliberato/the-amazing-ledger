@@ -6,7 +6,6 @@ title Component diagram for Command Handler API - Ledger system
 System_Ext(transactional_systems, "Transactional systems", "Uses the ledger during transactional operations")
 
 Container(ledger_query_api, "Ledger Query API", "Golang exporting RPC and Rest APIs", "Allows systems to get the balance and load the history of the accounts")
-Container(ledger_pub_service, "Ledger Publisher service", "Golang exporting RPC", "Allows systems to reveice account events throw Message Bus")
 
 ContainerDb(command_database, "Command Database", "Postgres Database", "Stores transaction and operations related to accounts")
 
@@ -21,11 +20,7 @@ Container_Boundary(ledger, "Ledger command API") {
     Rel(storage_controller, command_database, "Read & write to")
 }
 
-Container(message_bus, "Message Bus", "Kafka", "Transport for account events")
-
 Rel(transactional_systems, transaction_usecase, "Save transactions with operations related to accounts", "RPC/HTTPS")
 Rel(notifier_controller, ledger_query_api, "Sends events related to the accounts", "RPC/HTTPS")
-Rel(notifier_controller, ledger_pub_service, "Sends events related to the accounts", "RPC/HTTPS")
-Rel(ledger_pub_service, message_bus, "Sends events related to the accounts", "RPC/HTTPS")
 
 @enduml
