@@ -1,0 +1,17 @@
+@startuml Basic Sample
+!includeurl https://raw.githubusercontent.com/RicardoNiepel/C4-PlantUML/release/1-0/C4_Component.puml
+
+title Component diagram for Report API - Ledger system
+
+System_Ext(report_systems, "Report systems")
+
+Container_Boundary(ledger, "Report API") {
+    Component(query_controller, "Query controller", "Receive requests related to analytical and summary data", "Process analytical and summary reports")
+}
+
+Container(ledger_query_api, "Ledger Query API", "Golang exporting RPC and Rest APIs", "Allows systems to get the balance and load the history of the accounts")
+
+Rel(query_controller, ledger_query_api, "Get analytical and summary data")
+Rel(report_systems, query_controller, "Send analytical and summary reports requests", "RPC/HTTPS")
+
+@enduml
