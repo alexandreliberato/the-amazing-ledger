@@ -25,9 +25,26 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 				ELSE 0
 				END) AS total_debit
 		FROM entries
-		WHERE account_class = $3 AND account_group = $4 AND account_subgroup = $5 AND account_id = $6
-		GROUP BY account_class, account_group, account_subgroup, account_id
+		WHERE 1=1
+
 	`
+
+	if (accountName != entities.AccountName{}) {
+		query += `AND account_class = ` + accountName.Class.String()
+	}
+
+	if accountName.Group != "" {
+		query += `AND account_group = ` + accountName.Group
+	}
+
+	if accountName.Subgroup != "" {
+		query += `AND account_subgroup = ` + accountName.Subgroup
+	}
+
+	if accountName.ID != "" {
+		query += `AND account_id = ` + accountName.ID
+	}
+
 	creditOperation := entities.CreditOperation.String()
 	debitOperation := entities.DebitOperation.String()
 
@@ -36,11 +53,8 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 		query,
 		creditOperation,
 		debitOperation,
-		accountName.Class.String(),
-		accountName.Group,
-		accountName.Subgroup,
-		accountName.ID,
 	)
+
 	var currentVersion uint64
 	var totalCredit int
 	var totalDebit int
@@ -54,6 +68,7 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 		&totalCredit,
 		&totalDebit,
 	)
+
 	if err != nil {
 		return nil, err
 	}
