@@ -73,7 +73,8 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 		return nil, err
 	}
 
-	accountBalance := entities.NewAccountBalance(accountName, entities.Version(currentVersion), totalCredit, totalDebit)
+	//TODO return summary of transactions too
+	accountBalance := entities.NewAccountSummary(accountName, entities.Version(currentVersion), totalCredit, totalDebit)
 	return accountBalance, nil
 
 }
