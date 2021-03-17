@@ -14,17 +14,18 @@ func TestLedgerUseCase_GetAccountSummary(t *testing.T) {
 	t.Run("GetAccountSummary with startDate and endDate being equals must return the summary for the year", func(t *testing.T) {
 		totalCredit := 150
 		totalDebit := 130
-		expectedBalance := totalCredit - totalDebit
 
-		accountName, err := entities.NewAccountName("liability:stone:clients:user-1")
+		accountName := "liability"
+		paths := []entities.Path{{accountName, 10, 20}}
+
+		accountBalance, err := entities.NewAccountSummary(totalCredit, totalDebit, paths)
 		assert.Nil(t, err)
 
-		accountBalance := entities.NewAccountBalance(*accountName, 3, totalCredit, totalDebit)
 		//TODO add date
 
 		date := time.Now()
 
-		useCase := newFakeGetAccountSummary(accountBalance, date, nil)
+		useCase := newFakeGetAccountSummary(accountSummary, date, nil)
 		a, err := useCase.GetAccountSummary(context.Background(), accountBalance.AccountName, date, date)
 
 		assert.Nil(t, err)

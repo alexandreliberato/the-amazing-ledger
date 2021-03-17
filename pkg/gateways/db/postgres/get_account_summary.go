@@ -8,7 +8,7 @@ import (
 	"github.com/stone-co/the-amazing-ledger/pkg/command-handler/domain/ledger/entities"
 )
 
-func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountBalance, error) {
+func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountSummary, error) {
 	query := `
 		SELECT
 			account_class,
@@ -55,7 +55,6 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 		debitOperation,
 	)
 
-	var currentVersion uint64
 	var totalCredit int
 	var totalDebit int
 
@@ -64,7 +63,6 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 		nil,
 		nil,
 		nil,
-		&currentVersion,
 		&totalCredit,
 		&totalDebit,
 	)
@@ -74,7 +72,8 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 	}
 
 	//TODO return summary of transactions too
-	accountBalance := entities.NewAccountSummary(accountName, entities.Version(currentVersion), totalCredit, totalDebit)
-	return accountBalance, nil
+	paths := []entities.Path{}
+	accountSummary, err := entities.NewAccountSummary(totalCredit, totalDebit, paths)
+	return accountSummary, nil
 
 }
