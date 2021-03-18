@@ -12,5 +12,5 @@ type Repository interface {
 	CreateTransaction(context.Context, *entities.Transaction) error
 	LoadObjectsIntoCache(ctx context.Context, objects *entities.CachedAccounts) (entities.Version, error)
 	GetAccountBalance(ctx context.Context, accountName entities.AccountName) (*entities.AccountBalance, error)
-	GetAccountSummary(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountBalance, error)
+	GetAccountSummary(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountSummary, error)
 }
