@@ -13,7 +13,6 @@ type AccountSummary struct {
 }
 
 func NewAccountSummary(totalCredit, totalDebit int, paths []Path) (*AccountSummary, error) {
-
 	if paths == nil || len(paths) < 1 {
 		return nil, ErrInvalidAccountSummaryStructure
 	}
