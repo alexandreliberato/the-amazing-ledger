@@ -80,6 +80,7 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 	}
 
 	paths := []entities.Path{}
+	var currentVersion uint64
 	var totalCredit int
 	var totalDebit int
 
@@ -97,6 +98,7 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 			&group,
 			&subgroup,
 			&id,
+			&currentVersion,
 			&credit,
 			&debit,
 		)
@@ -107,14 +109,19 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 
 		acc := class + ":" + group + ":" + subgroup + ":" + id
 
-		path := entities.Path{acc, credit, debit}
+		path := entities.Path{
+			Account: acc,
+			Credit:  credit,
+			Debit:   debit,
+		}
+
 		paths = append(paths, path)
 
 		totalCredit = totalCredit + credit
 		totalDebit = totalDebit + debit
 	}
 
-	accountSummary, errEntity := entities.NewAccountSummary(totalCredit, totalDebit, paths)
+	accountSummary, errEntity := entities.NewAccountSummary(totalCredit, totalDebit, paths, entities.Version(currentVersion))
 	if errEntity != nil {
 		return nil, errEntity
 	}

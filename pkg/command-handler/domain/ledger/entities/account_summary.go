@@ -7,21 +7,21 @@ type Path struct {
 }
 
 type AccountSummary struct {
-	TotalCredit int
-	TotalDebit  int
-	Paths       []Path
+	TotalCredit    int
+	TotalDebit     int
+	Paths          []Path
+	CurrentVersion Version
 }
 
-func NewAccountSummary(totalCredit, totalDebit int, paths []Path) (*AccountSummary, error) {
+func NewAccountSummary(totalCredit, totalDebit int, paths []Path, version Version) (*AccountSummary, error) {
 	if paths == nil || len(paths) < 1 {
 		return nil, ErrInvalidAccountSummaryStructure
 	}
 
-	// TODO check empty path account
-
 	return &AccountSummary{
-		TotalCredit: totalCredit,
-		TotalDebit:  totalDebit,
-		Paths:       paths,
+		TotalCredit:    totalCredit,
+		TotalDebit:     totalDebit,
+		Paths:          paths,
+		CurrentVersion: version,
 	}, nil
 }
