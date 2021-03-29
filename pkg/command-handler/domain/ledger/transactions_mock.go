@@ -2,6 +2,7 @@ package ledger
 
 import (
 	"context"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/stone-co/the-amazing-ledger/pkg/command-handler/domain/ledger/entities"
@@ -11,6 +12,7 @@ type TransactionsMock struct {
 	OnCreateTransaction    func(ctx context.Context, id uuid.UUID, entries []entities.Entry) error
 	OnLoadObjectsIntoCache func(ctx context.Context) error
 	OnGetAccountBalance    func(ctx context.Context, accountName entities.AccountName) (*entities.AccountBalance, error)
+	OnGetAccountSummary    func(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountSummary, error)
 }
 
 func (m TransactionsMock) CreateTransaction(ctx context.Context, id uuid.UUID, entries []entities.Entry) error {
@@ -39,6 +41,18 @@ func SuccessfulTransactionMock() TransactionsMock {
 				CurrentVersion: 0,
 				TotalCredit:    0,
 				TotalDebit:     0,
+			}, nil
+		},
+		OnGetAccountSummary: func(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountSummary, error) {
+			return &entities.AccountSummary{
+				CurrentVersion: 0,
+				TotalCredit:    0,
+				TotalDebit:     0,
+				Paths: []entities.Path{{
+					Account: "",
+					Debit:   0,
+					Credit:  0,
+				}},
 			}, nil
 		},
 	}
