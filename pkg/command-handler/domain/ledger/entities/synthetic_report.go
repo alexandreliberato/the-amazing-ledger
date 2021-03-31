@@ -6,19 +6,20 @@ type Path struct {
 	Debit   int
 }
 
-type AccountSummary struct {
+type SyntheticReport struct {
 	TotalCredit    int
 	TotalDebit     int
 	Paths          []Path
 	CurrentVersion Version
 }
 
-func NewAccountSummary(totalCredit, totalDebit int, paths []Path, version Version) (*AccountSummary, error) {
+// synthetic account
+func NewSyntheticReport(totalCredit, totalDebit int, paths []Path, version Version) (*SyntheticReport, error) {
 	if paths == nil || len(paths) < 1 {
-		return nil, ErrInvalidAccountSummaryStructure
+		return nil, ErrInvalidSyntheticReportStructure
 	}
 
-	return &AccountSummary{
+	return &SyntheticReport{
 		TotalCredit:    totalCredit,
 		TotalDebit:     totalDebit,
 		Paths:          paths,

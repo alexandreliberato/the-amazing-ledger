@@ -45,12 +45,12 @@ func newFakeGetAccountBalance(accountBalance *entities.AccountBalance, result er
 	return NewLedgerUseCase(log, mockRepository)
 }
 
-func newFakeGetAccountSummary(accountSummary *entities.AccountSummary, date time.Time, result error) *LedgerUseCase {
+func newFakeGetSyntheticReport(syntheticReport *entities.SyntheticReport, date time.Time, result error) *LedgerUseCase {
 	log := logrus.New()
 
 	mockRepository := &ledger.RepositoryMock{
-		OnGetAccountSummary: func(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountSummary, error) {
-			return accountSummary, result
+		OnGetSyntheticReport: func(ctx context.Context, accountName string, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error) {
+			return syntheticReport, result
 		},
 	}
 

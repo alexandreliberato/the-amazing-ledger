@@ -11,7 +11,7 @@ type RepositoryMock struct {
 	OnCreateTransaction    func(context.Context, *entities.Transaction) error
 	OnLoadObjectsIntoCache func(ctx context.Context, cachedAccounts *entities.CachedAccounts) (entities.Version, error)
 	OnGetAccountBalance    func(ctx context.Context, accountName entities.AccountName) (*entities.AccountBalance, error)
-	OnGetAccountSummary    func(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountSummary, error)
+	OnGetSyntheticReport   func(ctx context.Context, accountName string, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error)
 }
 
 func (s RepositoryMock) CreateTransaction(ctx context.Context, transaction *entities.Transaction) error {
@@ -26,6 +26,6 @@ func (s RepositoryMock) GetAccountBalance(ctx context.Context, accountName entit
 	return s.OnGetAccountBalance(ctx, accountName)
 }
 
-func (s RepositoryMock) GetAccountSummary(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountSummary, error) {
-	return s.OnGetAccountSummary(ctx, accountName, startTime, endTime)
+func (s RepositoryMock) GetSyntheticReport(ctx context.Context, accountName string, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error) {
+	return s.OnGetSyntheticReport(ctx, accountName, startTime, endTime)
 }

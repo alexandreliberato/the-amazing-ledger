@@ -6,7 +6,7 @@ import (
 	"github.com/stretchr/testify/assert"
 )
 
-func TestAccountSummary(t *testing.T) {
+func TestSyntheticReport(t *testing.T) {
 	version := Version(1)
 	accountPathLiability := "liability"
 	accountPathAssets := "assets"
@@ -24,8 +24,8 @@ func TestAccountSummary(t *testing.T) {
 		},
 	}
 
-	accountSummary, err := NewAccountSummary(600, 800, paths, version)
+	syntheticReport, err := NewSyntheticReport(600, 800, paths, version)
 
 	assert.Nil(t, err)
-	assert.Equal(t, 2, len(accountSummary.Paths))
+	assert.Equal(t, 2, len(syntheticReport.Paths))
 }
