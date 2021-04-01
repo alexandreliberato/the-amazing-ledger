@@ -6,15 +6,15 @@ import (
 )
 
 const (
-	ErrInvalidData                    = EntityError("invalid data")
-	ErrInvalidEntriesNumber           = EntityError("invalid entries number")
-	ErrInvalidBalance                 = EntityError("invalid balance")
-	ErrIdempotencyKey                 = EntityError("idempotency key violation")
-	ErrInvalidVersion                 = EntityError("invalid version")
-	ErrInvalidAccountStructure        = EntityError("invalid account structure")
-	ErrInvalidAccountSummaryStructure = EntityError("invalid account summary structure")
-	ErrInvalidClassName               = EntityError("invalid class name")
-	ErrAccountNotFound                = EntityError("account not found")
+	ErrInvalidData                     = EntityError("invalid data")
+	ErrInvalidEntriesNumber            = EntityError("invalid entries number")
+	ErrInvalidBalance                  = EntityError("invalid balance")
+	ErrIdempotencyKey                  = EntityError("idempotency key violation")
+	ErrInvalidVersion                  = EntityError("invalid version")
+	ErrInvalidAccountStructure         = EntityError("invalid account structure")
+	ErrInvalidSyntheticReportStructure = EntityError("invalid synthetic report structure")
+	ErrInvalidClassName                = EntityError("invalid class name")
+	ErrAccountNotFound                 = EntityError("account not found")
 )
 
 type EntityError string

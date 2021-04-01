@@ -19,6 +19,12 @@ service LedgerService {
       get: "/api/v1/accounts/{account_path}/balance"
     };
   };
+  rpc GetSyntheticReport(GetSyntheticReportRequest) returns (GetSyntheticReportResponse){
+    option (google.api.http) = {
+      get: "/api/v1/accounts/{account_path}/report"
+    };
+  };
+
 }
 
 // SaveTransactionRequest represents a transaction to be saved. A transaction must
@@ -74,6 +80,29 @@ message GetAccountBalanceResponse {
   // The Account balance
   int64 balance = 5;
 }
+
+// GetSyntheticReport Request
+message GetSyntheticReportRequest {
+  // The account name
+  string account_path = 1;
+  int64 startTime = 2;
+  int64 endTime = 3;
+}
+
+// GetSyntheticReport Response
+message GetSyntheticReportResponse {
+  // The account name
+  string account_path = 1;
+  // The account version
+  uint64 current_version = 2;
+  // All credit accumulated
+  int64 total_credit = 3;
+  // All debit accumulated
+  int64 total_debit = 4;
+  // The Account balance
+  int64 balance = 5;
+}
+
 
 //https://github.com/grpc/grpc/blob/master/doc/health-checking.md
 // HealthCheckResponse is the health check status

@@ -2,13 +2,13 @@ package postgres
 
 import (
 	"context"
-
+	"strings"
 	"time"
 
 	"github.com/stone-co/the-amazing-ledger/pkg/command-handler/domain/ledger/entities"
 )
 
-func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountSummary, error) {
+func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName string, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error) {
 	var columns string = `
 		SELECT
 			account_class
@@ -32,29 +32,43 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 	var groupBy string = " GROUP BY 1"
 
 	// TODO dates
-	if (accountName != entities.AccountName{}) {
+	paths := strings.Split(accountName, ":")
+
+	// account.Class
+	if len(paths) >= 1 {
 		columns += ",account_group"
 		query += "AND account_class = $3"
 		query += "AND account_group is not null and account_group != '' "
 		groupBy += ",2"
 
-		if accountName.Group != "" {
+		// accountName.Group
+		if len(paths) >= 1 {
 			columns += ",account_subgroup"
 			query += `AND account_group = $4`
 			query += "AND account_subgroup is not null and account_group != '' "
 			groupBy += ",3"
 
-			if accountName.Subgroup != "" {
+			// accountName.Subgroup
+			if len(paths) >= 1 {
 				columns += ",account_id"
 				query += `AND account_subgroup = $5`
 				query += "AND account_id is not null and account_group != '' "
 				groupBy += ",4"
 
-				if accountName.ID != "" {
+				// accountName.ID
+				if len(paths) >= 1 {
 					query += `AND account_id = $6`
 				}
 			}
 		}
+	}
+
+	var dates string
+
+	if !startTime.IsZero() {
+		dates += "AND date_part('year', created_at) >= $7 and date_part('year', created_at)  <= coalesce($8, date_part('year', created_at)::integer)"
+		dates += "AND date_part('month', created_at) >= $9 and date_part('month', created_at)  <= coalesce($10, date_part('month', created_at)::integer)"
+		dates += "AND date_part('day', created_at) >= $11 and date_part('day', created_at)  <= coalesce($12, date_part('day', created_at)::integer)"
 	}
 
 	finalQuery := columns + query + groupBy
@@ -71,6 +85,12 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 		accountName.Group,
 		accountName.Subgroup,
 		accountName.ID,
+		startTime.Year,
+		endTime.Year,
+		startTime.Month,
+		endTime.Month,
+		startTime.Day,
+		endTime.Day,
 	)
 
 	defer rows.Close()
@@ -121,11 +141,11 @@ func (r *LedgerRepository) GetAccountSummary(ctx context.Context, accountName en
 		totalDebit = totalDebit + debit
 	}
 
-	accountSummary, errEntity := entities.NewAccountSummary(totalCredit, totalDebit, paths, entities.Version(currentVersion))
+	syntheticReport, errEntity := entities.NewSyntheticReport(totalCredit, totalDebit, paths, entities.Version(currentVersion))
 	if errEntity != nil {
 		return nil, errEntity
 	}
 
-	return accountSummary, nil
+	return syntheticReport, nil
 
 }

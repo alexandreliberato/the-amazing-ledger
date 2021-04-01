@@ -13,5 +13,5 @@ type UseCase interface {
 	CreateTransaction(ctx context.Context, id uuid.UUID, entries []entities.Entry) error
 	LoadObjectsIntoCache(ctx context.Context) error
 	GetAccountBalance(ctx context.Context, accountName entities.AccountName) (*entities.AccountBalance, error)
-	GetAccountSummary(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.AccountSummary, error)
+	GetSyntheticReport(ctx context.Context, accountName string, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error)
 }

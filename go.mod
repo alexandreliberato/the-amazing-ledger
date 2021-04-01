@@ -5,7 +5,7 @@ go 1.14
 require (
 	github.com/bufbuild/buf v0.30.1
 	github.com/golang-migrate/migrate/v4 v4.12.2
-	github.com/golang/protobuf v1.4.3
+	github.com/golang/protobuf v1.5.1
 	github.com/golangci/golangci-lint v1.31.0
 	github.com/google/uuid v1.1.2
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
@@ -17,11 +17,11 @@ require (
 	github.com/prometheus/client_golang v1.7.1
 	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.6.1
-	golang.org/x/net v0.0.0-20200904194848-62affa334b73
-	golang.org/x/tools v0.0.0-20200825202427-b303f430e36d
-	google.golang.org/genproto v0.0.0-20201112120144-2985b7af83de
-	google.golang.org/grpc v1.33.1
+	golang.org/x/net v0.0.0-20210316092652-d523dce5a7f4
+	golang.org/x/tools v0.1.0
+	google.golang.org/genproto v0.0.0-20210330181207-2295ebbda0c6
+	google.golang.org/grpc v1.36.1
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.0.1
-	google.golang.org/protobuf v1.25.1-0.20201020201750-d3470999428b
+	google.golang.org/protobuf v1.26.0
 	gotest.tools v2.2.0+incompatible
 )
