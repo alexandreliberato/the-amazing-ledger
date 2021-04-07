@@ -8,20 +8,19 @@ import (
 	"github.com/stone-co/the-amazing-ledger/pkg/command-handler/domain/ledger/entities"
 	"google.golang.org/grpc/codes"
 	"google.golang.org/grpc/status"
+
+	"time"
 )
 
-func (a *API) GetAccountBalance(ctx context.Context, request *proto.GetAccountBalanceRequest) (*proto.GetAccountBalanceResponse, error) {
+func (a *API) GetSyntheticReport(ctx context.Context, request *proto.GetSyntheticReportRequest) (*proto.GetSyntheticReportResponse, error) {
 	log := a.log.WithFields(logrus.Fields{
-		"handler": "GetAccountBalance",
+		"handler": "GetSyntheticReport",
 	})
 
-	accountName, err := entities.NewAccountName(request.AccountPath)
-	if err != nil {
-		log.WithError(err).Error("can't create account name")
-		return nil, status.Error(codes.InvalidArgument, err.Error())
-	}
+	startTime := time.Unix(request.StartTime, 0)
+	endTime := time.Unix(request.EndTime, 0)
 
-	accountBalance, err := a.UseCase.GetAccountBalance(ctx, *accountName)
+	syntheticReport, err := a.UseCase.GetSyntheticReport(ctx, request.AccountPath, startTime, endTime)
 	if err != nil {
 		if err == entities.ErrAccountNotFound {
 			log.WithError(err).Error("account name does not exist")
@@ -32,11 +31,24 @@ func (a *API) GetAccountBalance(ctx context.Context, request *proto.GetAccountBa
 		return nil, status.Error(codes.InvalidArgument, err.Error())
 	}
 
-	return &proto.GetAccountBalanceResponse{
-		AccountPath:    accountBalance.AccountName.Name(),
-		CurrentVersion: accountBalance.CurrentVersion.ToUInt64(),
-		TotalCredit:    int64(accountBalance.TotalCredit),
-		TotalDebit:     int64(accountBalance.TotalDebit),
-		Balance:        int64(accountBalance.Balance()),
+	return &proto.GetSyntheticReportResponse{
+		CurrentVersion: uint64(syntheticReport.CurrentVersion),
+		TotalCredit:    int64(syntheticReport.TotalCredit),
+		TotalDebit:     int64(syntheticReport.TotalDebit),
+		Paths:          toProto(syntheticReport.Paths),
 	}, nil
+}
+
+func toProto(paths []entities.Path) []*proto.Path {
+	protoPaths := []*proto.Path{}
+
+	for _, element := range paths {
+		protoPaths = append(protoPaths, &proto.Path{
+			Account: element.Account,
+			Credit:  int64(element.Credit),
+			Debit:   int64(element.Debit),
+		})
+	}
+
+	return protoPaths
 }

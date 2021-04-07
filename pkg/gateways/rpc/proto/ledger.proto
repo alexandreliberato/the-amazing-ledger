@@ -8,6 +8,7 @@ import "google/protobuf/empty.proto";
 service LedgerService {
   rpc SaveTransaction(SaveTransactionRequest) returns (google.protobuf.Empty);
   rpc GetAccountBalance(GetAccountBalanceRequest) returns (GetAccountBalanceResponse);
+  rpc GetSyntheticReport(GetSyntheticReportRequest) returns (GetSyntheticReportResponse);
 }
 
 // SaveTransactionRequest represents a transaction to be saved. A transaction must

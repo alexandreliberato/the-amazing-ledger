@@ -91,16 +91,23 @@ message GetSyntheticReportRequest {
 
 // GetSyntheticReport Response
 message GetSyntheticReportResponse {
-  // The account name
-  string account_path = 1;
   // The account version
-  uint64 current_version = 2;
+  uint64 current_version = 1;
   // All credit accumulated
-  int64 total_credit = 3;
+  int64 total_credit = 2;
   // All debit accumulated
-  int64 total_debit = 4;
-  // The Account balance
-  int64 balance = 5;
+  int64 total_debit = 3;
+  // The paths
+  repeated Path paths = 4;
+}
+
+message Path {
+// The account name
+  string account = 1;
+  // credit 
+  int64 credit = 2;
+  // debit 
+  int64 debit = 3;
 }
 
 

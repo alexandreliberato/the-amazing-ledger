@@ -12,7 +12,7 @@ type TransactionsMock struct {
 	OnCreateTransaction    func(ctx context.Context, id uuid.UUID, entries []entities.Entry) error
 	OnLoadObjectsIntoCache func(ctx context.Context) error
 	OnGetAccountBalance    func(ctx context.Context, accountName entities.AccountName) (*entities.AccountBalance, error)
-	OnGetSyntheticReport   func(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error)
+	OnGetSyntheticReport   func(ctx context.Context, accountName string, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error)
 }
 
 func (m TransactionsMock) CreateTransaction(ctx context.Context, id uuid.UUID, entries []entities.Entry) error {
@@ -25,6 +25,10 @@ func (m TransactionsMock) LoadObjectsIntoCache(ctx context.Context) error {
 
 func (m TransactionsMock) GetAccountBalance(ctx context.Context, accountName entities.AccountName) (*entities.AccountBalance, error) {
 	return m.OnGetAccountBalance(ctx, accountName)
+}
+
+func (m TransactionsMock) GetSyntheticReport(ctx context.Context, accountName string, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error) {
+	return m.OnGetSyntheticReport(ctx, accountName, startTime, endTime)
 }
 
 func SuccessfulTransactionMock() TransactionsMock {
@@ -43,7 +47,7 @@ func SuccessfulTransactionMock() TransactionsMock {
 				TotalDebit:     0,
 			}, nil
 		},
-		OnGetSyntheticReport: func(ctx context.Context, accountName entities.AccountName, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error) {
+		OnGetSyntheticReport: func(ctx context.Context, accountName string, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error) {
 			return &entities.SyntheticReport{
 				CurrentVersion: 0,
 				TotalCredit:    0,

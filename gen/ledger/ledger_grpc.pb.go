@@ -20,6 +20,7 @@ const _ = grpc.SupportPackageIsVersion7
 type LedgerServiceClient interface {
 	CreateTransaction(ctx context.Context, in *CreateTransactionRequest, opts ...grpc.CallOption) (*empty.Empty, error)
 	GetAccountBalance(ctx context.Context, in *GetAccountBalanceRequest, opts ...grpc.CallOption) (*GetAccountBalanceResponse, error)
+	GetSyntheticReport(ctx context.Context, in *GetSyntheticReportRequest, opts ...grpc.CallOption) (*GetSyntheticReportResponse, error)
 }
 
 type ledgerServiceClient struct {
@@ -48,12 +49,22 @@ func (c *ledgerServiceClient) GetAccountBalance(ctx context.Context, in *GetAcco
 	return out, nil
 }
 
+func (c *ledgerServiceClient) GetSyntheticReport(ctx context.Context, in *GetSyntheticReportRequest, opts ...grpc.CallOption) (*GetSyntheticReportResponse, error) {
+	out := new(GetSyntheticReportResponse)
+	err := c.cc.Invoke(ctx, "/ledger.LedgerService/GetSyntheticReport", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
 // LedgerServiceServer is the server API for LedgerService service.
 // All implementations should embed UnimplementedLedgerServiceServer
 // for forward compatibility
 type LedgerServiceServer interface {
 	CreateTransaction(context.Context, *CreateTransactionRequest) (*empty.Empty, error)
 	GetAccountBalance(context.Context, *GetAccountBalanceRequest) (*GetAccountBalanceResponse, error)
+	GetSyntheticReport(context.Context, *GetSyntheticReportRequest) (*GetSyntheticReportResponse, error)
 }
 
 // UnimplementedLedgerServiceServer should be embedded to have forward compatible implementations.
@@ -65,6 +76,9 @@ func (UnimplementedLedgerServiceServer) CreateTransaction(context.Context, *Crea
 }
 func (UnimplementedLedgerServiceServer) GetAccountBalance(context.Context, *GetAccountBalanceRequest) (*GetAccountBalanceResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetAccountBalance not implemented")
+}
+func (UnimplementedLedgerServiceServer) GetSyntheticReport(context.Context, *GetSyntheticReportRequest) (*GetSyntheticReportResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetSyntheticReport not implemented")
 }
 
 // UnsafeLedgerServiceServer may be embedded to opt out of forward compatibility for this service.
@@ -114,6 +128,24 @@ func _LedgerService_GetAccountBalance_Handler(srv interface{}, ctx context.Conte
 	return interceptor(ctx, in, info, handler)
 }
 
+func _LedgerService_GetSyntheticReport_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetSyntheticReportRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(LedgerServiceServer).GetSyntheticReport(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/ledger.LedgerService/GetSyntheticReport",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(LedgerServiceServer).GetSyntheticReport(ctx, req.(*GetSyntheticReportRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 var _LedgerService_serviceDesc = grpc.ServiceDesc{
 	ServiceName: "ledger.LedgerService",
 	HandlerType: (*LedgerServiceServer)(nil),
@@ -125,6 +157,10 @@ var _LedgerService_serviceDesc = grpc.ServiceDesc{
 		{
 			MethodName: "GetAccountBalance",
 			Handler:    _LedgerService_GetAccountBalance_Handler,
+		},
+		{
+			MethodName: "GetSyntheticReport",
+			Handler:    _LedgerService_GetSyntheticReport_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

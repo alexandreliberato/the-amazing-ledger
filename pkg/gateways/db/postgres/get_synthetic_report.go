@@ -2,6 +2,8 @@ package postgres
 
 import (
 	"context"
+	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -9,12 +11,15 @@ import (
 )
 
 func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName string, startTime time.Time, endTime time.Time) (*entities.SyntheticReport, error) {
+	var index uint16 = 2
+	var params = []string{}
+
 	var columns string = `
 		SELECT
 			account_class
 	`
 
-	query := `
+	var query string = `
 			MAX(version) as current_version,
 			SUM(CASE operation
 				WHEN $1 THEN amount
@@ -31,33 +36,58 @@ func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName s
 
 	var groupBy string = " GROUP BY 1"
 
-	// TODO dates
-	paths := strings.Split(accountName, ":")
+	var paths []string
 
-	// account.Class
+	if accountName != "" {
+		paths = strings.Split(accountName, ":")
+	}
+
+	var class string
+	var group string
+	var subgroup string
+	var id string
+
 	if len(paths) >= 1 {
+		class = paths[0]
+
+		index++
+
 		columns += ",account_group"
-		query += "AND account_class = $3"
+		query += fmt.Sprint("AND account_class = $", index)
 		query += "AND account_group is not null and account_group != '' "
 		groupBy += ",2"
 
-		// accountName.Group
+		params = append(params, class)
+
 		if len(paths) >= 1 {
+			group = paths[1]
+
+			index++
+
 			columns += ",account_subgroup"
-			query += `AND account_group = $4`
+			query += fmt.Sprint(`AND account_group = $`, index)
 			query += "AND account_subgroup is not null and account_group != '' "
 			groupBy += ",3"
 
-			// accountName.Subgroup
+			params = append(params, group)
+
 			if len(paths) >= 1 {
+				subgroup = paths[2]
+
+				index++
+
 				columns += ",account_id"
-				query += `AND account_subgroup = $5`
+				query += fmt.Sprint(`AND account_subgroup = $`, index)
 				query += "AND account_id is not null and account_group != '' "
 				groupBy += ",4"
 
-				// accountName.ID
+				params = append(params, subgroup)
+
 				if len(paths) >= 1 {
-					query += `AND account_id = $6`
+					id = paths[3]
+					index++
+					query += fmt.Sprint(`AND account_id = $`, index)
+					params = append(params, id)
 				}
 			}
 		}
@@ -69,6 +99,28 @@ func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName s
 		dates += "AND date_part('year', created_at) >= $7 and date_part('year', created_at)  <= coalesce($8, date_part('year', created_at)::integer)"
 		dates += "AND date_part('month', created_at) >= $9 and date_part('month', created_at)  <= coalesce($10, date_part('month', created_at)::integer)"
 		dates += "AND date_part('day', created_at) >= $11 and date_part('day', created_at)  <= coalesce($12, date_part('day', created_at)::integer)"
+
+		startYear := startTime.Year()
+		startMonth := int(startTime.Month())
+		startDay := startTime.Day()
+
+		var endYear string
+		var endMonth string
+		var endDay string
+
+		params = append(params, strconv.Itoa(startYear))
+		params = append(params, strconv.Itoa(startMonth))
+		params = append(params, strconv.Itoa(startDay))
+
+		if !endTime.IsZero() {
+			endYear = strconv.Itoa(endTime.Year())
+			endMonth = strconv.Itoa(int(endTime.Month()))
+			endYear = strconv.Itoa(endTime.Day())
+
+			params = append(params, endYear)
+			params = append(params, endMonth)
+			params = append(params, endDay)
+		}
 	}
 
 	finalQuery := columns + query + groupBy
@@ -79,18 +131,9 @@ func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName s
 	rows, errQuery := r.db.Query(
 		context.Background(),
 		finalQuery,
-		creditOperation,
-		debitOperation,
-		accountName.Class.String(),
-		accountName.Group,
-		accountName.Subgroup,
-		accountName.ID,
-		startTime.Year,
-		endTime.Year,
-		startTime.Month,
-		endTime.Month,
-		startTime.Day,
-		endTime.Day,
+		creditOperation, // obrigatorio
+		debitOperation,  // obrigatorio
+		params,
 	)
 
 	defer rows.Close()
@@ -99,7 +142,7 @@ func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName s
 		return nil, errQuery
 	}
 
-	paths := []entities.Path{}
+	pathsReport := []entities.Path{}
 	var currentVersion uint64
 	var totalCredit int
 	var totalDebit int
@@ -135,13 +178,13 @@ func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName s
 			Debit:   debit,
 		}
 
-		paths = append(paths, path)
+		pathsReport = append(pathsReport, path)
 
 		totalCredit = totalCredit + credit
 		totalDebit = totalDebit + debit
 	}
 
-	syntheticReport, errEntity := entities.NewSyntheticReport(totalCredit, totalDebit, paths, entities.Version(currentVersion))
+	syntheticReport, errEntity := entities.NewSyntheticReport(totalCredit, totalDebit, pathsReport, entities.Version(currentVersion))
 	if errEntity != nil {
 		return nil, errEntity
 	}

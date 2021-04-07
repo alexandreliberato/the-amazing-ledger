@@ -15,6 +15,7 @@ require (
 	github.com/kevinburke/go-bindata v3.22.0+incompatible
 	github.com/kyoh86/richgo v0.3.3
 	github.com/prometheus/client_golang v1.7.1
+	github.com/resotto/gochk v1.2.0
 	github.com/sirupsen/logrus v1.7.0
 	github.com/stretchr/testify v1.6.1
 	golang.org/x/net v0.0.0-20210316092652-d523dce5a7f4
@@ -23,5 +24,4 @@ require (
 	google.golang.org/grpc v1.36.1
 	google.golang.org/grpc/cmd/protoc-gen-go-grpc v1.0.1
 	google.golang.org/protobuf v1.26.0
-	gotest.tools v2.2.0+incompatible
 )
