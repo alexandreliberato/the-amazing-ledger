@@ -10,7 +10,7 @@ import (
 	"github.com/stone-co/the-amazing-ledger/pkg/command-handler/domain/ledger/entities"
 )
 
-func defineTransactionWithThreeEntries(log *logrus.Entry, conn *ledger.Connection) {
+func DefineTransactionWithThreeEntries(log *logrus.Entry, conn *ledger.Connection) {
 	log.Println("starting defineTransactionWithThreeEntries")
 	defer log.Println("finishing defineTransactionWithThreeEntries")
 

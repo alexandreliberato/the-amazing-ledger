@@ -23,10 +23,12 @@ func main() {
 
 	defer conn.Close()
 
-	defineTransactionWithThreeEntries(log, conn)
-	invalidTransactionsTests(log, conn)
+	//	DefineTransactionWithThreeEntries(log, conn)
+	//	invalidTransactionsTests(log, conn)
 
-	getAccountBalance(log, conn)
-	getAccountBalanceWithMoreEntries(log, conn)
-	getAccountBalanceNotFoundAccount(log, conn)
+	getSyntheticReport(log, conn)
+
+	//	getAccountBalance(log, conn)
+	//	getAccountBalanceWithMoreEntries(log, conn)
+	//	getAccountBalanceNotFoundAccount(log, conn)
 }

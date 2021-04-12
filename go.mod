@@ -4,6 +4,7 @@ go 1.14
 
 require (
 	github.com/bufbuild/buf v0.30.1
+	github.com/fullstorydev/grpcurl v1.8.0 // indirect
 	github.com/golang-migrate/migrate/v4 v4.12.2
 	github.com/golang/protobuf v1.5.1
 	github.com/golangci/golangci-lint v1.31.0

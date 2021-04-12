@@ -118,10 +118,6 @@ func local_request_LedgerService_GetAccountBalance_0(ctx context.Context, marsha
 
 }
 
-var (
-	filter_LedgerService_GetSyntheticReport_0 = &utilities.DoubleArray{Encoding: map[string]int{"account_path": 0}, Base: []int{1, 1, 0}, Check: []int{0, 1, 2}}
-)
-
 func request_LedgerService_GetSyntheticReport_0(ctx context.Context, marshaler runtime.Marshaler, client LedgerServiceClient, req *http.Request, pathParams map[string]string) (proto.Message, runtime.ServerMetadata, error) {
 	var protoReq GetSyntheticReportRequest
 	var metadata runtime.ServerMetadata
@@ -143,11 +139,24 @@ func request_LedgerService_GetSyntheticReport_0(ctx context.Context, marshaler r
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "account_path", err)
 	}
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	val, ok = pathParams["start_time"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "start_time")
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_LedgerService_GetSyntheticReport_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+
+	protoReq.StartTime, err = runtime.Int64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "start_time", err)
+	}
+
+	val, ok = pathParams["end_time"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "end_time")
+	}
+
+	protoReq.EndTime, err = runtime.Int64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "end_time", err)
 	}
 
 	msg, err := client.GetSyntheticReport(ctx, &protoReq, grpc.Header(&metadata.HeaderMD), grpc.Trailer(&metadata.TrailerMD))
@@ -176,11 +185,24 @@ func local_request_LedgerService_GetSyntheticReport_0(ctx context.Context, marsh
 		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "account_path", err)
 	}
 
-	if err := req.ParseForm(); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+	val, ok = pathParams["start_time"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "start_time")
 	}
-	if err := runtime.PopulateQueryParameters(&protoReq, req.Form, filter_LedgerService_GetSyntheticReport_0); err != nil {
-		return nil, metadata, status.Errorf(codes.InvalidArgument, "%v", err)
+
+	protoReq.StartTime, err = runtime.Int64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "start_time", err)
+	}
+
+	val, ok = pathParams["end_time"]
+	if !ok {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "missing parameter %s", "end_time")
+	}
+
+	protoReq.EndTime, err = runtime.Int64(val)
+	if err != nil {
+		return nil, metadata, status.Errorf(codes.InvalidArgument, "type mismatch, parameter: %s, error: %v", "end_time", err)
 	}
 
 	msg, err := server.GetSyntheticReport(ctx, &protoReq)
@@ -422,7 +444,7 @@ var (
 
 	pattern_LedgerService_GetAccountBalance_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "accounts", "account_path", "balance"}, ""))
 
-	pattern_LedgerService_GetSyntheticReport_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 2, 4}, []string{"api", "v1", "accounts", "account_path", "report"}, ""))
+	pattern_LedgerService_GetSyntheticReport_0 = runtime.MustPattern(runtime.NewPattern(1, []int{2, 0, 2, 1, 2, 2, 1, 0, 4, 1, 5, 3, 1, 0, 4, 1, 5, 4, 1, 0, 4, 1, 5, 5, 2, 6}, []string{"api", "v1", "reports", "account_path", "start_time", "end_time", "synthetic"}, ""))
 )
 
 var (

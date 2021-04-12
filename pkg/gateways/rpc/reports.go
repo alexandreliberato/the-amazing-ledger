@@ -17,8 +17,8 @@ func (a *API) GetSyntheticReport(ctx context.Context, request *proto.GetSyntheti
 		"handler": "GetSyntheticReport",
 	})
 
-	startTime := time.Unix(request.StartTime, 0)
-	endTime := time.Unix(request.EndTime, 0)
+	startTime := time.Unix(0, request.StartTime)
+	endTime := time.Unix(0, request.EndTime)
 
 	syntheticReport, err := a.UseCase.GetSyntheticReport(ctx, request.AccountPath, startTime, endTime)
 	if err != nil {

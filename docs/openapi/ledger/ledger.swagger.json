@@ -42,7 +42,30 @@
         ]
       }
     },
-    "/api/v1/accounts/{accountPath}/report": {
+    "/api/v1/health": {
+      "get": {
+        "summary": "Check - checks the system health.",
+        "operationId": "Health_Check",
+        "responses": {
+          "200": {
+            "description": "A successful response.",
+            "schema": {
+              "$ref": "#/definitions/ledgerHealthCheckResponse"
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "schema": {
+              "$ref": "#/definitions/rpcStatus"
+            }
+          }
+        },
+        "tags": [
+          "Health"
+        ]
+      }
+    },
+    "/api/v1/reports/{accountPath}/{startTime}/{endTime}/synthetic": {
       "get": {
         "operationId": "LedgerService_GetSyntheticReport",
         "responses": {
@@ -69,44 +92,21 @@
           },
           {
             "name": "startTime",
-            "in": "query",
-            "required": false,
+            "in": "path",
+            "required": true,
             "type": "string",
             "format": "int64"
           },
           {
             "name": "endTime",
-            "in": "query",
-            "required": false,
+            "in": "path",
+            "required": true,
             "type": "string",
             "format": "int64"
           }
         ],
         "tags": [
           "LedgerService"
-        ]
-      }
-    },
-    "/api/v1/health": {
-      "get": {
-        "summary": "Check - checks the system health.",
-        "operationId": "Health_Check",
-        "responses": {
-          "200": {
-            "description": "A successful response.",
-            "schema": {
-              "$ref": "#/definitions/ledgerHealthCheckResponse"
-            }
-          },
-          "default": {
-            "description": "An unexpected error response.",
-            "schema": {
-              "$ref": "#/definitions/rpcStatus"
-            }
-          }
-        },
-        "tags": [
-          "Health"
         ]
       }
     },
