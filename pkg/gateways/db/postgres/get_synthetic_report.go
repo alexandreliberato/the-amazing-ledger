@@ -115,21 +115,25 @@ func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName s
 		log.Printf("> sm: %v\n", startMonth)
 		log.Printf("> sd: %v\n", startDay)
 
-		params = append(params, strconv.Itoa(startYear))
-		params = append(params, strconv.Itoa(startMonth))
-		params = append(params, strconv.Itoa(startDay))
-
 		if !endTime.IsZero() {
 			log.Printf("> end date: %v", endTime)
 
 			endYear = strconv.Itoa(endTime.Year())
 			endMonth = strconv.Itoa(int(endTime.Month()))
-			endYear = strconv.Itoa(endTime.Day())
+			endDay = strconv.Itoa(endTime.Day())
 
-			params = append(params, endYear)
-			params = append(params, endMonth)
-			params = append(params, endDay)
+		} else {
+			endYear = strconv.Itoa(startTime.Year())
+			endMonth = strconv.Itoa(int(startTime.Month()))
+			endDay = strconv.Itoa(startTime.Day())
 		}
+
+		params = append(params, strconv.Itoa(startYear))
+		params = append(params, endYear)
+		params = append(params, strconv.Itoa(startMonth))
+		params = append(params, endMonth)
+		params = append(params, strconv.Itoa(startDay))
+		params = append(params, endDay)
 	}
 
 	finalQuery := columns + query + dates + groupBy
