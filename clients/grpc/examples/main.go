@@ -26,7 +26,9 @@ func main() {
 	//	DefineTransactionWithThreeEntries(log, conn)
 	//	invalidTransactionsTests(log, conn)
 
-	getSyntheticReport(log, conn)
+	getSyntheticReportFullPath(log, conn)
+	//	getSyntheticReportSubgroup(log, conn)
+	//	getSyntheticReportGroup(log, conn)
 
 	//	getAccountBalance(log, conn)
 	//	getAccountBalanceWithMoreEntries(log, conn)

@@ -9,9 +9,9 @@ import (
 )
 
 type Path struct {
-	account string
-	debit   int64
-	credit  int64
+	Account string
+	Debit   int64
+	Credit  int64
 }
 
 type SyntheticReport struct {
@@ -50,7 +50,7 @@ func (c *Connection) GetSyntheticReport(ctx context.Context, accountPath string,
 		return nil, fmt.Errorf("not able to parse error returned %v", err)
 	}
 
-	fmt.Printf("> response: %v", response)
+	fmt.Printf("> responsee: %v", response)
 
 	report := &SyntheticReport{
 		totalCredit: int(response.TotalCredit),
@@ -66,9 +66,9 @@ func toPaths(protoPaths []*proto.Path) []*Path {
 
 	for _, v := range protoPaths {
 		path := Path{
-			debit:   v.Debit,
-			credit:  v.Credit,
-			account: v.Account,
+			Debit:   v.Debit,
+			Credit:  v.Credit,
+			Account: v.Account,
 		}
 
 		paths = append(paths, &path)

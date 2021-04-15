@@ -11,15 +11,135 @@ import (
 	"github.com/stone-co/the-amazing-ledger/pkg/command-handler/domain/ledger/entities"
 )
 
-func getSyntheticReport(log *logrus.Entry, conn *ledger.Connection) {
+func getSyntheticReportFullPath(log *logrus.Entry, conn *ledger.Connection) {
 	log.Println("starting GetSyntheticReport")
 	defer log.Println("finishing GetSyntheticReport")
 
 	// expectedBalance := 1000
 	accountPathOne := "liability:stone:clients:" + uuid.New().String()
-	accountPathTwo := "liability:stone:clients:" + uuid.New().String()
 
-	log.Println("starting GetSyntheticReport 2")
+	// Define a new transaction with 2 entries
+	t := conn.NewTransaction(uuid.New())
+	t.AddEntry(uuid.New(), accountPathOne, entities.NewAccountVersion, entities.CreditOperation, 1000)
+	err := conn.SaveTransaction(context.Background(), t)
+	AssertEqual(nil, err)
+
+	now := time.Now().UnixNano()
+
+	report, err := conn.GetSyntheticReport(context.Background(), accountPathOne, now, now)
+
+	fmt.Printf("> reportt: %v\n\n", report)
+
+	AssertTrue(report != nil)
+
+	paths := report.Paths()
+
+	AssertTrue(paths != nil)
+
+	AssertEqual(accountPathOne, paths[0].Account)
+	AssertEqual(int64(1000), paths[0].Credit)
+	AssertEqual(int64(0), paths[0].Debit)
+}
+
+func getSyntheticReportFullPathDoubleEntry(log *logrus.Entry, conn *ledger.Connection) {
+	log.Println("starting GetSyntheticReport")
+	defer log.Println("finishing GetSyntheticReport")
+
+	// expectedBalance := 1000
+	accountPathOne := "liability:stone:clients:" + uuid.New().String()
+
+	// Define a new transaction with 2 entries
+	t := conn.NewTransaction(uuid.New())
+	t.AddEntry(uuid.New(), accountPathOne, entities.NewAccountVersion, entities.CreditOperation, 1000)
+	t.AddEntry(uuid.New(), accountPathOne, entities.NewAccountVersion, entities.CreditOperation, 1000)
+	err := conn.SaveTransaction(context.Background(), t)
+	AssertEqual(nil, err)
+
+	now := time.Now().UnixNano()
+
+	report, err := conn.GetSyntheticReport(context.Background(), accountPathOne, now, now)
+
+	fmt.Printf("> reportt: %v\n\n", report)
+
+	AssertTrue(report != nil)
+
+	paths := report.Paths()
+
+	AssertTrue(paths != nil)
+
+	AssertEqual(accountPathOne, paths[0].Account)
+	AssertEqual(int64(2000), paths[0].Credit)
+	AssertEqual(int64(0), paths[0].Debit)
+}
+
+func getSyntheticReportFullPathDebit(log *logrus.Entry, conn *ledger.Connection) {
+	log.Println("starting GetSyntheticReport")
+	defer log.Println("finishing GetSyntheticReport")
+
+	// expectedBalance := 1000
+	accountPathOne := "liability:stone:clients:" + uuid.New().String()
+
+	// Define a new transaction with 2 entries
+	t := conn.NewTransaction(uuid.New())
+	t.AddEntry(uuid.New(), accountPathOne, entities.NewAccountVersion, entities.DebitOperation, 1000)
+	err := conn.SaveTransaction(context.Background(), t)
+	AssertEqual(nil, err)
+
+	now := time.Now().UnixNano()
+
+	report, err := conn.GetSyntheticReport(context.Background(), accountPathOne, now, now)
+
+	fmt.Printf("> reportt: %v\n\n", report)
+
+	AssertTrue(report != nil)
+
+	paths := report.Paths()
+
+	AssertTrue(paths != nil)
+
+	AssertEqual(accountPathOne, paths[0].Account)
+	AssertEqual(int64(1000), paths[0].Debit)
+	AssertEqual(int64(0), paths[0].Credit)
+}
+
+func getSyntheticReportSubgroup(log *logrus.Entry, conn *ledger.Connection) {
+	log.Println("starting GetSyntheticReport Subgroup")
+	defer log.Println("finishing GetSyntheticReport Subgroup")
+
+	// expectedBalance := 1000
+	accountPathOne := "liability:stone:clients"
+
+	// Define a new transaction with 2 entries
+	t := conn.NewTransaction(uuid.New())
+	t.AddEntry(uuid.New(), accountPathOne, entities.NewAccountVersion, entities.CreditOperation, 1000)
+	err := conn.SaveTransaction(context.Background(), t)
+	AssertEqual(nil, err)
+
+	now := time.Now().UnixNano()
+
+	report, err := conn.GetSyntheticReport(context.Background(), accountPathOne, now, now)
+
+	fmt.Printf("> reportt: %v\n\n", report)
+
+	AssertTrue(report != nil)
+
+	paths := report.Paths()
+
+	AssertTrue(paths != nil)
+
+	AssertEqual(accountPathOne, paths[0].Account)
+	AssertEqual(int64(1000), paths[0].Credit)
+	AssertEqual(int64(0), paths[0].Debit)
+}
+
+func getSyntheticReportGroup(log *logrus.Entry, conn *ledger.Connection) {
+	log.Println("starting GetSyntheticReport Subgroup")
+	defer log.Println("finishing GetSyntheticReport Subgroup")
+
+	// expectedBalance := 1000
+	accountPathOne := "liability:stone"
+	accountPathTwo := "liability:xpto"
+
 	// Define a new transaction with 2 entries
 	t := conn.NewTransaction(uuid.New())
 	t.AddEntry(uuid.New(), accountPathOne, entities.NewAccountVersion, entities.CreditOperation, 1000)
@@ -27,16 +147,19 @@ func getSyntheticReport(log *logrus.Entry, conn *ledger.Connection) {
 	err := conn.SaveTransaction(context.Background(), t)
 	AssertEqual(nil, err)
 
-	log.Println("starting GetSyntheticReport 3")
 	now := time.Now().UnixNano()
 
 	report, err := conn.GetSyntheticReport(context.Background(), accountPathOne, now, now)
 
-	fmt.Printf("> report: %v\n\n", report)
+	fmt.Printf("> reportt: %v\n\n", report)
 
 	AssertTrue(report != nil)
 
-	//AssertEqual(accountPathOne, accountBalance.AccountName().Name())
-	//AssertEqual(expectedBalance, accountBalance.Balance())
-	//AssertEqual(nil, err)
+	paths := report.Paths()
+
+	AssertTrue(paths != nil)
+
+	AssertEqual(accountPathOne, paths[0].Account)
+	AssertEqual(int64(1000), paths[0].Credit)
+	AssertEqual(int64(0), paths[0].Debit)
 }
