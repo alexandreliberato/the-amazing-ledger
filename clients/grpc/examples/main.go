@@ -27,8 +27,12 @@ func main() {
 	//	invalidTransactionsTests(log, conn)
 
 	getSyntheticReportFullPath(log, conn)
-	//	getSyntheticReportSubgroup(log, conn)
-	//	getSyntheticReportGroup(log, conn)
+	getSyntheticReportFullPathDoubleEntry(log, conn)
+
+	getSyntheticReportFullPathDebit(log, conn)
+
+	getSyntheticReportSubgroup(log, conn)
+	getSyntheticReportGroup(log, conn)
 
 	//	getAccountBalance(log, conn)
 	//	getAccountBalanceWithMoreEntries(log, conn)
