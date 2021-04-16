@@ -92,7 +92,7 @@ func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName s
 	var endDay string
 
 	if !startTime.IsZero() {
-		log.Printf("> init datee: %v", startTime)
+		log.Printf("> init date: %v\n", startTime)
 
 		index++
 		dates += fmt.Sprintf(" AND date_part('year', created_at) >= $%v::integer and date_part('year', created_at)  <= coalesce($%v::integer, date_part('year', created_at)::integer) ", index, (index + 1))
@@ -116,7 +116,7 @@ func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName s
 		log.Printf("> sd: %v\n", startDay)
 
 		if !endTime.IsZero() {
-			log.Printf("> end date: %v", endTime)
+			log.Printf("> end date: %v\n", endTime)
 
 			endYear = strconv.Itoa(endTime.Year())
 			endMonth = strconv.Itoa(int(endTime.Month()))
@@ -146,22 +146,21 @@ func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName s
 		paramss[i] = s
 	}
 
-	log.Printf("> number of params: %v", len(paramss))
+	log.Printf("> number of params: %v\n", len(paramss))
 
 	rows, errQuery := r.db.Query(
 		context.Background(),
 		finalQuery,
 		paramss...,
 	)
+	if errQuery != nil {
+		log.Printf("> err query: %v\n", errQuery)
+		return nil, errQuery
+	}
 
 	log.Println("> query run ok!")
 
 	defer rows.Close()
-
-	if errQuery != nil {
-		log.Printf("> err query: %v", errQuery)
-		return nil, errQuery
-	}
 
 	pathsReport := []entities.Path{}
 	var currentVersion uint64
@@ -205,6 +204,16 @@ func (r *LedgerRepository) GetSyntheticReport(ctx context.Context, accountName s
 
 		totalCredit = totalCredit + credit
 		totalDebit = totalDebit + debit
+	}
+
+	errNext := rows.Err()
+	if errNext != nil {
+		log.Printf("> error on Next: %v", errNext)
+		return nil, errNext
+	}
+
+	if pathsReport == nil || len(pathsReport) < 1 {
+		return nil, entities.ErrAccountNotFound
 	}
 
 	log.Printf("> pathsReport: %v", pathsReport)

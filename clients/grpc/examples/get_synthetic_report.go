@@ -27,11 +27,8 @@ func getSyntheticReportFullPath(log *logrus.Entry, conn *ledger.Connection) {
 	AssertEqual(nil, err)
 
 	now := time.Now().UnixNano()
-
 	report, err := conn.GetSyntheticReport(context.Background(), accountPathOne, now, now)
-
 	fmt.Printf("> report: %v\n\n", report)
-
 	AssertTrue(report != nil)
 
 	paths := report.Paths()
@@ -58,15 +55,11 @@ func getSyntheticReportSubgroup(log *logrus.Entry, conn *ledger.Connection) {
 	AssertEqual(nil, err)
 
 	now := time.Now().UnixNano()
-
 	report, err := conn.GetSyntheticReport(context.Background(), accountPathOne, now, now)
-
 	fmt.Printf("> report: %v\n\n", report)
-
 	AssertTrue(report != nil)
 
 	paths := report.Paths()
-
 	AssertTrue(paths != nil)
 
 	AssertEqual(accountPathOne, paths[0].Account)
